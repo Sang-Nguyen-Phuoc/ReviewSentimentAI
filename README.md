@@ -1,1 +1,1 @@
-# ProductEmotionNLP
+# ReviewSentimentAI

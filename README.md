@@ -16,3 +16,6 @@ When you want to install a new package to virtual environment, please include it
 `pip install [package_name]`  
 `pip freeze > requirements.txt`  
 
+
+Run application  
+`py server.py`

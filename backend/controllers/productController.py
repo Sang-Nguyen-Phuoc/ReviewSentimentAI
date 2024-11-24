@@ -1,110 +1,70 @@
-from flask import jsonify, request
-from urllib.parse import urlparse, parse_qs
-import requests
-import random
+from flask import jsonify
+import torch
+import time
+from transformers import RobertaForSequenceClassification, AutoTokenizer
+
 
 from utils.commentParser import commentParser , save
+from utils.appError import AppError
+from utils.tikiAPIs import TikiAPIs
 
 class ProductController: 
+    # Class attributes for model and tokenizer
+    model = None
+    tokenizer = None
+
+    @classmethod
+    def initialize(cls):
+        if cls.model is None or cls.tokenizer is None:
+            cls.model = RobertaForSequenceClassification.from_pretrained("wonrax/phobert-base-vietnamese-sentiment")
+            cls.tokenizer = AutoTokenizer.from_pretrained("wonrax/phobert-base-vietnamese-sentiment", use_fast=False)
+
     @staticmethod
-    def getCommentsOfProducts():
-        data = request.json
-        product_url = data.get('product_url')
-        if product_url is None:
-            return jsonify({
-                'status': 'fail',
-                'status_code': 400, 
-                'message': 'The link to the product is required'
-            })
+    async def getCommentsOfProducts(product_url):
+        print("Fetching comments...")
+        try:
+            if product_url is None:
+                raise AppError('Please provide a product URL from tiki.vn', 400)
+            
+            # check if the product_url is a valid URL
+            if not product_url.startswith('https://tiki.vn/'):
+                raise AppError('Invalid product URL from tiki.vn', 400)
+
+            product_id, spid, seller_id = TikiAPIs.getIDs(product_url)
+
+            # Estimate time to fetch comments
+            start = time.time()
+            comments = await TikiAPIs.fetchComments(product_id, spid, seller_id)
+            end = time.time()
+
+            print(f"Time to fetch comments: {end - start} seconds")
+           
+            save(comments)
+            return comments
+        except AppError as e:
+            return jsonify(e.to_dict())  
         
-        # check if the product_url is a valid URL
-        if not product_url.startswith('https://tiki.vn/'):
-            return jsonify({
-                'status': 'fail',
-                'status_code': 400,
-                'message': 'Invalid product URL from tiki.vn'
-            })
+    @staticmethod
+    def analyzeComments(comments):
+        print("Analyzing comments...")
+        try:
+            # Analyze the comments
+            NEGs = []
+            POSs = []
+            NEUs = []
 
+            with torch.no_grad():
+                for comment in comments:
+                    input_ids = torch.tensor([ProductController.tokenizer.encode(comment)])
+                    out = ProductController.model(input_ids)
+                    sentiment = out.logits.softmax(dim=-1).argmax().item()
+                    if sentiment == 0:
+                        NEGs.append(comment)
+                    elif sentiment == 1:
+                        POSs.append(comment)
+                    else:
+                        NEUs.append(comment)
 
-        # Parse the URL
-        parsed_url = urlparse(product_url)
-
-        # Extract the product ID from the path
-        product_id = parsed_url.path.split('-')[-1].split('.')[0]
-        
-        # remove the first 'p' in the product_id
-        product_id = product_id[1:]
-
-        # Extract query parameters
-        query_params = parse_qs(parsed_url.query)
-
-        # Get the `spid` value
-        spid = query_params.get('spid', [None])[0]
-
-
-        # check if the link is a valid product link
-        if spid is None or product_id is None:
-            return jsonify({
-                'status': 'fail',
-                'status_code': 400,
-                'message': 'Invalid  URL, please provide a valid product URL from tiki.vn'
-            })
-
-        # tiki review api
-        api_url = f"https://tiki.vn/api/v2/reviews"
-        
-        # query params
-        params = {
-            "limit": 5,
-            "include": "comments,contribute_info,attribute_vote_summary",
-            "sort": "score|desc,id|desc,stars|all",
-            "spid": spid,
-            "product_id": product_id,
-            "seller_id": 1
-        }
-
-        headers = {
-            "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        }   
-
-        # get the total pages
-        response = requests.get(api_url, headers=headers, params=params)
-        total_pages = response.json().get('paging').get('last_page')
-
-
-        comments = []
-        random_pages = []
-
-        # nessesary to get the comments in random order to get a good sample
-        random_pages = random.sample(range(1, total_pages + 1), min(100, total_pages))
-        
-        # get the comments from the random pages
-        for page in random_pages:
-            params['page'] = page
-            response = requests.get(api_url, headers=headers, params=params)
-            for comment in response.json().get('data'):
-                if len(comment.get('content')) > 10:
-                    comments.append(commentParser(comment))
-
-        # save the comments to data/test.csv file
-        save(comments)
-
-        if response.status_code != 200:
-            return jsonify({
-                'status': 'fail',
-                'status_code': response.status_code,
-                'message': 'Failed to fetch product comments'
-            })
-
-        return jsonify({
-            'status': 'success',
-            'status_code': 200,
-            'total_comments': len(comments),
-            'data': comments
-        })
+            return NEGs, POSs, NEUs
+        except Exception as e:
+            raise AppError(str(e), 500)

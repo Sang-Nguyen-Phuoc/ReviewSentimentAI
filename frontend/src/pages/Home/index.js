@@ -3,13 +3,18 @@ import Banner from '../../components/Banner'
 import styles from './Home.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandshakeAngle } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router';
 
 
 export default function Home() {
   const [link, setLink] = useState('');
-  const handleClick = (e) => {
+  const navigate = useNavigate();
 
+  const handleClick = (e) => {
     console.log(link);
+    navigate('/analyze', {
+      state: {product: link}
+    })
     setLink('')
   }
   return (

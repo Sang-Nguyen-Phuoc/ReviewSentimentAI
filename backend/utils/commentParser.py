@@ -4,6 +4,7 @@ import os
 
 def commentParser(comment):
     res = comment.get('content')
+    res = res.replace('\n', ' ').replace('\r', ' ')    
     return res
 
 

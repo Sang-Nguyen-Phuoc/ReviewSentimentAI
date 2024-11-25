@@ -48,11 +48,10 @@ class ProductController:
     def analyzeComments(comments):
         print("Analyzing comments...")
         try:
-            # Analyze the comments
-            NEGs = []
-            POSs = []
-            NEUs = []
+            start = time.time()
 
+            NEGs, POSs, NEUs = [], [], []
+            
             with torch.no_grad():
                 for comment in comments:
                     input_ids = torch.tensor([ProductController.tokenizer.encode(comment)])
@@ -65,6 +64,8 @@ class ProductController:
                     else:
                         NEUs.append(comment)
 
+            print(f"Time to analyze comments: {time.time() - start:.2f} seconds")
             return NEGs, POSs, NEUs
+
         except Exception as e:
-            raise AppError(str(e), 500)
+            raise AppError(f"Error analyzing comments: {str(e)}", 500)

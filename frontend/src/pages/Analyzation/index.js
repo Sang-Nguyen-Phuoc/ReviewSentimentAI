@@ -7,7 +7,11 @@ import { useState } from 'react';
 
 export default function Analyzation() {
   const xData = ['Tích cực', 'Tiêu cực', 'Trung lập'];
-  const yData = data.map((arr) => (arr.length));
+
+  const location = useLocation();
+  const {state} = location
+  const comments = state ? [state.data.positive_comments, state.data.negative_comments, state.data.neutral_comments] : data 
+  const yData = comments.map((arr) => (arr.length));
 
   const total = yData.reduce((acc, val) => acc + val, 0);
   const formattedData = yData.map((value, index) => ({
@@ -18,8 +22,7 @@ export default function Analyzation() {
   }));
 
   const [type, setType] = useState(0);
-  const location = useLocation();
-  const {state} = location
+  
 
   const handleClick = (event, item) => {
     setType(item.dataIndex);
@@ -81,7 +84,7 @@ export default function Analyzation() {
                 <span className={styles.type}>{xData[type]}</span>
             </p>
             <ul>
-                {data[type].map((comment, index) => {
+                {comments[type].map((comment, index) => {
                     return <li key={index}>{comment}</li>
                 })}
             </ul>

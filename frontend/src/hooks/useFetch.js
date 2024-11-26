@@ -33,10 +33,8 @@ const useFetch = (url, req) => {
                 }); 
 
                 try {
-                    console.log('fetching....')
                     const response = await fetch(url, req);
                     const data = await response.json();
-                    console.log('fetched....')
                     if (data.status === 'success') {
                         console.log('success')
                         dispatch({
@@ -55,8 +53,6 @@ const useFetch = (url, req) => {
                         });
                     }
                 } catch (err) {
-                    console.log(err);
-                    console.log('fail to fetch')
                     dispatch({
                         type: 'fetchAPI/error',
                         payload: [],

@@ -7,21 +7,16 @@ import { faHandshakeAngle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router';
 import toast, { Toaster } from 'react-hot-toast';
 import Modal from 'react-bootstrap/Modal';
+import Spinner from 'react-bootstrap/Spinner';
 
 const REACT_APP_BASEURL = "http://localhost:3001";
 const reqAPI = {
     method: 'POST',
     headers : {
-      "Postman-Token": "<calculated when request is sent>",
       "Content-Type": "application/json",
-      "Content-Length": "<calculated when request is sent>",
-      "Host": "<calculated when request is sent>",
-      "User-Agent": "PostmanRuntime/7.42.0",
-      "Accept": "*/*",
-      "Accept-Encoding": "gzip, deflate, br",
-      "Connection": "keep-alive"
     },
     body: null,
+    credentials: 'include',
 };
 
 export default function Home() {
@@ -35,15 +30,10 @@ export default function Home() {
     }
     reqAPI.body = JSON.stringify(data)
     setFetch(fetch+1)
-    // navigate('/analyze', {
-    //   state: {product: link}
-    // })
-    setLink('')
   }
 
   // Call API
   const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, reqAPI);
-  console.log(isLoading)
   useEffect(() => {
       if (status === 'success'){
         navigate('/analyze', {state: {
@@ -51,12 +41,13 @@ export default function Home() {
           data: payload
         }})
       }
-      else if (status !== 'fail') {
+      else if (status !== 'success' && status !== 'fail') {
           toast.error(status);
+          setLink('');
       }
       reqAPI.body = null;
       setFetch(fetch+1);
-  }, [payload, status, isLoading])
+  }, [payload, status])
 
   return (
     <>
@@ -94,13 +85,30 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {isLoading && (
-        <Modal>
-          <Modal.Body>
-            <h1>Analyzing...</h1>
-          </Modal.Body>
-        </Modal>)}
-    {/* <Banner/> */}
+      <Modal
+        keyboard={false}
+        fullscreen={true}
+        show={isLoading}
+        centered={true}
+        style={{
+          opacity: 0.5,
+        }}
+      >
+        <Modal.Body
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center", // Centers horizontally
+            justifyContent: "center", // Centers vertically
+            height: "100vh", // Ensures it takes up full screen height
+            textAlign: "center", // Centers the text
+          }}
+        >
+          <Spinner animation="border" />
+          <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>Đang phân tích</p>
+        </Modal.Body>
+      </Modal>
+    <Banner/>
   </>
 )
 }

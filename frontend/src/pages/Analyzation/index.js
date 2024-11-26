@@ -4,6 +4,7 @@ import styles from './Analyzation.module.css'
 import { useLocation } from 'react-router';
 import data from './data';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function Analyzation() {
   const xData = ['Tích cực', 'Tiêu cực', 'Trung lập'];
@@ -48,7 +49,7 @@ export default function Analyzation() {
                     {
                     label: 'Số lượng đánh giá',       // Y-axis label
                     tickSpacing: 1,         // Spacing between ticks
-                    max: 10,                 // Maximum value of the Y-axis
+                    max: Math.max.apply(null, yData)+10,                 // Maximum value of the Y-axis
                     min: 0,                 // Minimum value of the Y-axis
                     showGrid: true,         // Show gridlines
                     },
@@ -57,7 +58,7 @@ export default function Analyzation() {
                     {data: yData},
                 ]}
                 width={window.innerWidth*0.5}
-                height={400}
+                height={window.innerHeight*0.6}
                 colors={['#1a4a81']}
                 onAxisClick={handleClick} // Attach the click handler
                 margin={{

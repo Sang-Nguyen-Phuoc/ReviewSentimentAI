@@ -5,7 +5,7 @@ from utils.appError import AppError
 
 productRoutes = Blueprint('userRoutes', __name__)
 
-@productRoutes.route('/', methods=['GET'])
+@productRoutes.route('/', methods=['POST'])
 async def getResults():
     try:
         comments = await ProductController.getCommentsOfProducts(request.json.get('product_url'))       

@@ -12,9 +12,6 @@ app = Flask(__name__)
 # Configure CORS to allow requests from your frontend
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
-# Register the product blueprint
-app.register_blueprint(productRoutes, url_prefix='/api/v1/product')
-
 # Handle preflight requests explicitly
 @app.before_request
 def handle_preflight():

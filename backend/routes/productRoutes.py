@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from utils.appError import AppError
 
-productRoutes = Blueprint('userRoutes', __name__)
+productRoutes = Blueprint('productRoutes', __name__)
 
 @productRoutes.route('/', methods=['POST'])
 async def getResults():

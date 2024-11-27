@@ -4,6 +4,7 @@ from routes.productRoutes import productRoutes
 from controllers.productController import ProductController
 from routes.authRoutes import authRoutes
 from data.database import Database
+from routes.linkRoutes import linkRoutes
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -40,6 +41,7 @@ try:
     # Register blueprints
     app.register_blueprint(productRoutes, url_prefix='/api/v1/product')
     app.register_blueprint(authRoutes, url_prefix='/api/v1/auth')
+    app.register_blueprint(linkRoutes, url_prefix='/api/v1/link')
 
     if __name__ == '__main__':
         ProductController.initialize()

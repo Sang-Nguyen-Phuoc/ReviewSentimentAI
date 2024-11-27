@@ -30,7 +30,7 @@ class TikiAPIs:
 
         params = {
             "platform": "web",
-            "spid": 249875152,
+            "spid": spid,
             "version": 3
         }   
 
@@ -89,4 +89,36 @@ class TikiAPIs:
                         comments.append(commentParser(comment))
 
             return comments
+    
+    @staticmethod
+    def getInformation(product_id, spid, seller_id):
+        api_url = f"https://tiki.vn/api/v2/products/{product_id}"
         
+        headers = {
+            "sec-ch-ua": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        }
+
+        params = {
+            "platform": "web",
+            "spid": spid,
+            "version": 3
+        }
+
+        response = requests.get(api_url, headers=headers, params=params).json()
+
+        information = {}
+        information['name'] = response.get('name')
+        information['price'] = response.get('price')
+        information['sold'] = response.get('all_time_quantity_sold')
+        information['categories'] = response.get('categories').get('name')
+        information['description'] = response.get('description')
+        information['images'] = [image.get('base_url') for image in response.get('images')]
+        information['rating'] = response.get('rating_average')
+
+        return information

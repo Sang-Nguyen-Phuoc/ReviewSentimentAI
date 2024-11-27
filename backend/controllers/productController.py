@@ -1,10 +1,9 @@
 from flask import jsonify
 import torch
 import time
-from transformers import RobertaForSequenceClassification, AutoTokenizer
-
-
-from utils.commentParser import commentParser , save
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import threading
+import os
 from utils.appError import AppError
 from utils.tikiAPIs import TikiAPIs
 
@@ -13,25 +12,17 @@ class ProductController:
     model = None
     tokenizer = None
 
-    @classmethod
-    def initialize(cls):
-        if cls.model is None or cls.tokenizer is None:
-            cls.model = RobertaForSequenceClassification.from_pretrained("wonrax/phobert-base-vietnamese-sentiment")
-            cls.tokenizer = AutoTokenizer.from_pretrained("wonrax/phobert-base-vietnamese-sentiment", use_fast=False)
+    @staticmethod
+    def initialize():
+        print("Initializing model and tokenizer...")
+        ProductController.tokenizer = AutoTokenizer.from_pretrained("lamsytan/sentiment-analysis-base-phobert")
+        ProductController.model = AutoModelForSequenceClassification.from_pretrained("lamsytan/sentiment-analysis-base-phobert")
+        print("Model and tokenizer initialized.")
 
     @staticmethod
-    async def getCommentsOfProducts(product_url):
+    async def getCommentsOfProducts(product_id, spid, seller_id):
         print("Fetching comments...")
         try:
-            if product_url is None:
-                raise AppError('Please provide a product URL from tiki.vn', 400)
-            
-            # check if the product_url is a valid URL
-            if not product_url.startswith('https://tiki.vn/'):
-                raise AppError('Invalid product URL from tiki.vn', 400)
-
-            product_id, spid, seller_id = TikiAPIs.getIDs(product_url)
-
             # Estimate time to fetch comments
             start = time.time()
             comments = await TikiAPIs.fetchComments(product_id, spid, seller_id)
@@ -39,13 +30,29 @@ class ProductController:
 
             print(f"Time to fetch comments: {end - start} seconds")
            
-            save(comments)
+            # save(comments)
             return comments
         except AppError as e:
             return jsonify(e.to_dict())  
         
     @staticmethod
+    def getInformation(product_id, spid, seller_id):
+        print("Fetching information...")
+        try:
+            start = time.time()
+            information = TikiAPIs.getInformation(product_id, spid, seller_id)
+            end = time.time()
+
+            print(f"Time to fetch information: {end - start} seconds")
+            return information
+        except AppError as e:
+            return jsonify(e.to_dict())
+
+    @staticmethod
     def analyzeComments(comments):
+        if ProductController.tokenizer is None or ProductController.model is None:
+            raise AppError("Model and tokenizer are not initialized", 500)
+     
         print("Analyzing comments...")
         try:
             start = time.time()
@@ -54,9 +61,10 @@ class ProductController:
             
             with torch.no_grad():
                 for comment in comments:
-                    input_ids = torch.tensor([ProductController.tokenizer.encode(comment)])
-                    out = ProductController.model(input_ids)
-                    sentiment = out.logits.softmax(dim=-1).argmax().item()
+                    inputs = ProductController.tokenizer(comment, return_tensors="pt", padding=True, truncation=True)
+                    outputs = ProductController.model(**inputs)
+                    sentiment = torch.softmax(outputs.logits, dim=1).argmax().item()
+
                     if sentiment == 0:
                         NEGs.append(comment)
                     elif sentiment == 1:

@@ -36,7 +36,6 @@ const useFetch = (url, req) => {
                     const response = await fetch(url, req);
                     const data = await response.json();
                     if (data.status === 'success') {
-                        console.log('success')
                         dispatch({
                             type: 'fetchAPI/success',
                             payload: data.data,
@@ -44,7 +43,6 @@ const useFetch = (url, req) => {
                             status: 'success',
                         });
                     } else {
-                        console.log('fail')
                         dispatch({
                             type: 'fetchAPI/error',
                             payload: [],

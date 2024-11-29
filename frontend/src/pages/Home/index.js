@@ -36,10 +36,7 @@ export default function Home() {
   const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, reqAPI);
   useEffect(() => {
       if (status === 'success'){
-        navigate('/analyze', {state: {
-          product: link,
-          data: payload
-        }})
+        navigate('/analyze', {state: payload})
       }
       else if (status !== 'success' && status !== 'fail') {
           toast.error(status);

@@ -4,15 +4,13 @@ from routes.productRoutes import productRoutes
 from controllers.productController import ProductController
 from routes.authRoutes import authRoutes
 from data.database import Database
+from routes.linkRoutes import linkRoutes
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Configure CORS to allow requests from your frontend
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
-
-# Register the product blueprint
-app.register_blueprint(productRoutes, url_prefix='/api/v1/product')
 
 # Handle preflight requests explicitly
 @app.before_request
@@ -36,14 +34,15 @@ db_instance = Database()
 
 try:
     db = db_instance.get_database()
-
+    
     # Register blueprints
     app.register_blueprint(productRoutes, url_prefix='/api/v1/product')
     app.register_blueprint(authRoutes, url_prefix='/api/v1/auth')
+    app.register_blueprint(linkRoutes, url_prefix='/api/v1/link')
 
     if __name__ == '__main__':
         ProductController.initialize()
-        app.run(debug=True, port=3001)
+        app.run(port=3001)
 except Exception as e:
     print(f"Failed to start the server: {str(e)}")
 finally:

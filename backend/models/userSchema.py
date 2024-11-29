@@ -2,20 +2,16 @@ from werkzeug.security import generate_password_hash
 
 class UserSchema:
     def __init__(self, db=None):
-        # Initialize the collection with db if provided, else None
         self.collection = db['users'] if db else None
         if not self.collection:
             raise ValueError("Database collection could not be initialized.")
 
-    def create_user(self, email, password, links):
-        if self.collection is None:  # Explicitly check if collection is None
+    def create_user(self, email, password):
+        if self.collection is None:
             raise ValueError("Database collection not initialized.")
 
-        # Debug print to confirm collection type
-        print("Collection type:", type(self.collection))
-
         # Check if the user already exists
-        if self.collection.find_one({"email": email}):  # Ensure self.collection is correct
+        if self.collection.find_one({"email": email}):
             raise ValueError("Email already exists")
 
         # Hash password
@@ -24,17 +20,13 @@ class UserSchema:
         # Create user document
         user = {
             "email": email,
-            "password": hashed_password,
-            "links": links  # Include the links provided by the user
+            "password": hashed_password
         }
-        self.collection.insert_one(user)
+        inserted = self.collection.insert_one(user)
+        user["_id"] = inserted.inserted_id  # Include ObjectID in response
         return user
 
     def find_user_by_email(self, email):
-        if self.collection is None:  # Explicitly check if collection is None
+        if self.collection is None:
             raise ValueError("Database collection not initialized.")
-        
-        # Debug print to confirm collection type
-        print("Collection type:", type(self.collection))
-
-        return self.collection.find_one({"email": email})  # Ensure self.collection is correct
+        return self.collection.find_one({"email": email})

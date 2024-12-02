@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react'
 import Banner from '../../components/Banner'
 import styles from './Home.module.css'
 import useFetch from '../../hooks/useFetch';
+import AnalyzeModal from '../../components/AnalyzeModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandshakeAngle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router';
 import toast, { Toaster } from 'react-hot-toast';
-import Modal from 'react-bootstrap/Modal';
-import Spinner from 'react-bootstrap/Spinner';
 
 const REACT_APP_BASEURL = "http://localhost:3001";
 const reqAPI = {
@@ -36,10 +35,7 @@ export default function Home() {
   const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, reqAPI);
   useEffect(() => {
       if (status === 'success'){
-        navigate('/analyze', {state: {
-          product: link,
-          data: payload
-        }})
+        navigate('/analyze', {state: payload})
       }
       else if (status !== 'success' && status !== 'fail') {
           toast.error(status);
@@ -85,30 +81,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <Modal
-        keyboard={false}
-        fullscreen={true}
-        show={isLoading}
-        centered={true}
-        style={{
-          opacity: 0.5,
-        }}
-      >
-        <Modal.Body
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center", // Centers horizontally
-            justifyContent: "center", // Centers vertically
-            height: "100vh", // Ensures it takes up full screen height
-            textAlign: "center", // Centers the text
-          }}
-        >
-          <Spinner animation="border" />
-          <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>Đang phân tích</p>
-        </Modal.Body>
-      </Modal>
-    <Banner/>
-  </>
+      <AnalyzeModal show={isLoading}/>
+      <Banner/>
+    </>
 )
 }

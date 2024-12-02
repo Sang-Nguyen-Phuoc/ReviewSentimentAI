@@ -1,19 +1,19 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../Authentication.module.css'
-import { useRef, useState } from 'react';
-// import useFetch from '../../hooks/useFetch';
-// import toast, { Toaster } from 'react-hot-toast';
+import { useRef, useState, useEffect } from 'react';
+import useFetch from '../../../hooks/useFetch';
+import toast from 'react-hot-toast';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 
-// const REACT_APP_BASEURL = "http://localhost:3002";
-// const reqAPI = {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: null,
-// };
+const REACT_APP_BASEURL = "http://localhost:3001";
+const reqAPI = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: null,
+};
 
 function SignUp() {
     const handleValidatePassword = (password) => {
@@ -41,17 +41,16 @@ function SignUp() {
             'email': emailRef.current.value,
             'password': passwordRef.current.value,
         }
-
-        console.log(newDataSignUp);
         
         emailRef.current.value = '';
         passwordRef.current.value = '';
         repasswordRef.current.value = '';
         emailRef.current.focus();
-        // reqAPI.body = JSON.stringify(newDataSignUp);
+        
+        setFetch({...fetch, body: JSON.stringify(newDataSignUp)});
     }
 
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [showPass, setShowPass] = useState(false);
     const [showRePass, setShowRePass] = useState(false);
@@ -63,26 +62,23 @@ function SignUp() {
     const passwordRef = useRef(null);
     const repasswordRef = useRef(null);
 
-    // Fetch API
-    // const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/register`, reqAPI);
+    const [fetch, setFetch] = useState(reqAPI);
 
-    // useEffect(() => {
-    //     if (status === 'success'){
-    //         toast.success('Register successfully!');
-    //         const navi = setTimeout(() => navigate('/signin'), 2000);
-    //     }
-    //     else if (status !== 'fail') {
-    //         toast.error(status);
-    //     }
-    //     reqAPI.body = null;
-    // }, [payload, status])
+    // Fetch API
+    const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/signup`, fetch);
+    useEffect(() => {
+        if (status === 'success'){
+            toast.success('Đăng ký thành công');
+            navigate('/signin');
+        }
+        else if (status !== 'fail') {
+            toast.error('Email đã tồn tại');
+        }
+        setFetch({...fetch, body:null})
+    }, [payload, status])
 
     return (
         <div className={styles.wrapper}>
-            {/* <Toaster 
-                position='top-right'
-                reverseOrder={false}
-            /> */}
             <form className={styles.form} onSubmit={handleSignUp}>
                 <div className={styles.username}>
                     <label htmlFor='usernameInput'>

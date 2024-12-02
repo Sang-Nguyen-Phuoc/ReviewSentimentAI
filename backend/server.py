@@ -10,7 +10,7 @@ from routes.linkRoutes import linkRoutes
 app = Flask(__name__)
 
 # Configure CORS to allow requests from your frontend
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app)
 
 # Handle preflight requests explicitly
 @app.before_request
@@ -21,7 +21,7 @@ def handle_preflight():
         response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
         response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Credentials", "true")
+        # response.headers.add("Access-Control-Allow-Credentials", "true")
         return response
 
 # Catch-all route for debugging (optional)

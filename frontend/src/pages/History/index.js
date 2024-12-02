@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import useFetch from '../../hooks/useFetch';
 import AnalyzeModal from '../../components/AnalyzeModal';
 import { useNavigate } from 'react-router';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faStar } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,7 +15,6 @@ const API = {
       "Content-Type": "application/json",
     },
     body: null,
-    credentials: 'include',
 };
 
 const History = () => {
@@ -70,10 +69,6 @@ const History = () => {
     return ( 
         <div className={styles.wrapper}>
             <AnalyzeModal show={isLoading}/>
-            <Toaster
-                position='top-right'
-                reverseOrder={false}
-            />
             <div className={styles.search}>
                 <div className={styles.input} >
                     <input ref={inputRef} placeholder='Nhập tên sản phẩm'/>

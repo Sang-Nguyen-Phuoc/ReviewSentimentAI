@@ -5,7 +5,7 @@ import useFetch from '../../../hooks/useFetch';
 // import {CurrentUserContext} from '../../context/CurrentUserContext'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const REACT_APP_BASEURL = "http://localhost:3001";
 const reqAPI = {
@@ -24,47 +24,40 @@ function Signin() {
             'email': emailRef.current.value,
             'password': passwordRef.current.value
         };
-        console.log(dataSignIn);
 
         emailRef.current.value = '';
         emailRef.current.focus();
         passwordRef.current.value = '';
         
-        reqAPI.body = JSON.stringify(dataSignIn);
+        setFetch({...fetch, body: JSON.stringify(dataSignIn)});
         setShow(false);
-        setFetch(fetch+1);
     }
 
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const [show, setShow] = useState(false);
-    const [fetch, setFetch] = useState(0);
+    const [fetch, setFetch] = useState(reqAPI);
     const navigate = useNavigate();
     // const {setCurrentUser} = useContext(CurrentUserContext);
 
 
     // Call API
-    const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/login`, reqAPI);
+    const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/signin`, fetch);
 
     useEffect(() => {
         if (status === 'success'){
-            toast.success('Sign in successfully!');
+            toast.success('Đăng nhập thành công');
+            navigate('/');
             // setCurrentUser(payload);
-            setTimeout(() => navigate('/'), 2000);
         }
         else if (status !== 'fail') {
-            toast.error(status);
+            toast.error('Tên đăng nhập hoặc mật khẩu không đúng');
         }
-        reqAPI.body = null;
-        setFetch(fetch+1);
+        setFetch({...fetch, body:null});
     }, [payload, status])
 
     return (
         <div className={styles.wrapper}>
-            <Toaster
-                position='top-right'
-                reverseOrder={false}
-            />
             <form className = {styles.form} onSubmit={handleSignIn}>
                 <div className={styles.email}>
                     <label htmlFor='emailInput'>

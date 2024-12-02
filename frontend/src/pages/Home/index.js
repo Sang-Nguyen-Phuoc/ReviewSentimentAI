@@ -15,24 +15,22 @@ const reqAPI = {
       "Content-Type": "application/json",
     },
     body: null,
-    credentials: 'include',
 };
 
 export default function Home() {
   const [link, setLink] = useState('');
   const navigate = useNavigate();
-  const [fetch, setFetch] = useState(0);
+  const [fetch, setFetch] = useState(reqAPI);
 
   const handleClick = (e) => {
     const data = {
       product_url: link
     }
-    reqAPI.body = JSON.stringify(data)
-    setFetch(fetch+1)
+    setFetch({...fetch, body: JSON.stringify(data)})
   }
 
   // Call API
-  const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, reqAPI);
+  const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, fetch);
   useEffect(() => {
       if (status === 'success'){
         navigate('/analyze', {state: payload})
@@ -41,8 +39,7 @@ export default function Home() {
           toast.error(status);
           setLink('');
       }
-      reqAPI.body = null;
-      setFetch(fetch+1);
+      setFetch({...fetch, body: null});
   }, [payload, status])
 
   return (

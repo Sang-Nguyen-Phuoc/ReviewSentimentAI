@@ -27,7 +27,7 @@ class LinkController:
         return jsonify({
             "status": "success",
             "message": "Link added successfully!",
-            "link": {
+            "data": {
                 "id": str(link["_id"]),
                 "product_name": link["product_name"],
                 "product_url": link["product_url"],
@@ -52,7 +52,7 @@ class LinkController:
         return jsonify({
             "status": "success",
             "message": f"Links fetched for user ID {user_id}",
-            "links": [
+            "data": [
                 {
                     "id": str(link["_id"]),
                     "product_name": link["product_name"],

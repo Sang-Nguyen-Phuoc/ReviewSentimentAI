@@ -17,6 +17,7 @@ class AuthController:
 
         email = data.get("email")
         password = data.get("password")
+        name = data.get("name")
 
         # Validate email format
         if not is_valid_email(email):
@@ -25,19 +26,20 @@ class AuthController:
     
         # Create the user using UserSchema
         try:
-            user = user_model.create_user(email, password)
+            user_model.create_user(email, password, name)
         except ValueError as e:
             raise AppError(str(e), 400)
-
-        # Return a valid response using jsonify
+        except AppError as e:
+            return jsonify(e.to_dict()), e.status_code
+        
+        # Return success response
         return jsonify({
             "status": "success",
-            "message": "User signed up successfully!",
-            "user": {
-                "id": str(user["_id"]),  # Convert ObjectId to string for JSON
-                "email": user["email"]
-            }
-        }), 201  # Ensure status code 201 for successful creation
+            "message": "User signed up successfully!"
+        }), 201
+
+
+    @staticmethod
     def signin(data, db):
         # Initialize UserSchema with the database
         user_model = UserSchema(db)
@@ -62,13 +64,14 @@ class AuthController:
         if not check_password_hash(user["password"], password):
             raise AppError("Invalid credentials: Incorrect password.", 401)
 
-        # Return a success response
+        # Return success response
         return jsonify({
             "status": "success",
             "message": "Sign-in successful!",
-            "user": {
-                "id": str(user["_id"]),  # Convert ObjectId to string
-                "email": user["email"]
+            "data": {
+                "id": str(user["_id"]),
+                "email": user["email"],
+                "name": user["name"]
             }
         }), 200
 

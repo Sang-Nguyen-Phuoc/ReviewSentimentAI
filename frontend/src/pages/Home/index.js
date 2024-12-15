@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandshakeAngle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router';
 import toast, { Toaster } from 'react-hot-toast';
+import { getCurrentUser } from '../../utils/userStorage';
 
 const REACT_APP_BASEURL = "http://localhost:3001";
 const reqAPI = {
@@ -20,26 +21,72 @@ const reqAPI = {
 export default function Home() {
   const [link, setLink] = useState('');
   const navigate = useNavigate();
-  const [fetch, setFetch] = useState(reqAPI);
+  const [fetchRequest, setFetchRequest] = useState(reqAPI);
 
   const handleClick = (e) => {
+    const currentUser = getCurrentUser();
+    if (!currentUser){
+      toast.error('Vui lòng đăng nhập để sử dụng chức năng này');
+      return;
+    }
+
     const data = {
       product_url: link
     }
-    setFetch({...fetch, body: JSON.stringify(data)})
+    setFetchRequest({...fetchRequest, body: JSON.stringify(data)});
+  }
+
+  const addLink = async (fetchReq) => {
+    try {
+      const response = await fetch(`${REACT_APP_BASEURL}/api/v1/link/add`, fetchReq);
+      const data = await response.json();
+      if (data.status === 'success') {
+        toast.success('Phân tích thành công');
+      }
+      else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error('Lỗi kết nối đến server');
+    }
   }
 
   // Call API
-  const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, fetch);
+  const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, fetchRequest);
   useEffect(() => {
       if (status === 'success'){
-        navigate('/analyze', {state: payload})
+        const information = payload.information;
+        const bodyFetch = {
+          user_id : getCurrentUser().id,
+          product_name : information.name,
+          product_url : link,
+          price : information.price,
+          sold : information.sold,
+          imgs_url : information.images,
+          rating : information.rating,
+        };
+        const fetchReq = {
+          ...reqAPI,
+          body: JSON.stringify(bodyFetch)
+        };
+  
+        addLink(fetchReq);
+
+        navigate('/analyze', {
+          state: {
+            ...bodyFetch, 
+            description: information.description,
+            positive_comments: payload.positive_comments,
+            negative_comments: payload.negative_comments,
+            neutral_comments: payload.neutral_comments,
+          }
+        });
       }
       else if (status !== 'success' && status !== 'fail') {
           toast.error(status);
           setLink('');
       }
-      setFetch({...fetch, body: null});
+      setFetchRequest({...fetchRequest, body: null});
   }, [payload, status])
 
   return (

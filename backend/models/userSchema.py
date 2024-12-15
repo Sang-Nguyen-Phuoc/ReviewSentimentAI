@@ -13,7 +13,7 @@ class UserSchema:
         if not self.collection:
             raise ValueError("Database collection could not be initialized.")
 
-    def create_user(self, email, password):
+    def create_user(self, email, password, name):
         if self.collection is None:
             raise ValueError("Database collection not initialized.")
 
@@ -35,7 +35,8 @@ class UserSchema:
         # Create user document
         user = {
             "email": email,
-            "password": hashed_password
+            "password": hashed_password,
+            "name": name
         }
         inserted = self.collection.insert_one(user)
         user["_id"] = inserted.inserted_id  # Include ObjectID in response

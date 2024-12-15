@@ -10,18 +10,16 @@ class LinkController:
         product_name = data.get("product_name")
         product_url = data.get("product_url")
         price = data.get("price")
+        sold = data.get("sold")
         imgs_url = data.get("imgs_url")
-        comments = data.get("comments")
-        description = data.get("description", "")
         rating = data.get("rating", "")
-        summerization = data.get("summerization")
 
         if not user_id or not product_name or not product_url or not price:
             raise AppError("Missing required fields: user_id, product_name, product_url, or price.", 400)
 
         link_model = LinkSchema(db)
         link = link_model.create_link(
-            user_id, product_name, product_url, price, imgs_url, comments, description, rating, summerization
+            user_id, product_name, product_url, price, sold, imgs_url, rating
         )
 
         return jsonify({
@@ -31,12 +29,10 @@ class LinkController:
                 "id": str(link["_id"]),
                 "product_name": link["product_name"],
                 "product_url": link["product_url"],
+                "sold": link["sold"],
                 "price": link["price"],
                 "imgs_url": link["imgs_url"],
-                "comments": link["comments"],
-                "description": link["description"],
                 "rating": link["rating"],
-                "summerization": link["summerization"]
             }
         }), 201
 
@@ -58,11 +54,9 @@ class LinkController:
                     "product_name": link["product_name"],
                     "product_url": link["product_url"],
                     "price": link["price"],
+                    "sold": link["sold"],
                     "imgs_url": link["imgs_url"],
-                    "comments": link["comments"],
-                    "description": link["description"],
                     "rating": link["rating"],
-                    "summerization": link["summerization"]
                 }
                 for link in links
             ]

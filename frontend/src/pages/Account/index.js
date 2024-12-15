@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './Account.module.css';
+import { getCurrentUser } from '../../utils/userStorage';
 
 const Account = () => {
     const [validation, setValidation] = useState(true);
@@ -8,6 +9,8 @@ const Account = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
+
+    const currentUser = getCurrentUser();
 
     const handleValidatePassword = (password) => {
         setPassword(password);
@@ -51,11 +54,11 @@ const Account = () => {
                         <tbody>
                             <tr>
                                 <td>Họ tên</td>
-                                <td>John Doe</td>
+                                <td>{currentUser.name}</td>
                             </tr>
                             <tr>
                                 <td>Email</td>
-                                <td>abc@sample.com</td>
+                                <td>{currentUser.email}</td>
                             </tr>
                         </tbody>
                     </table>

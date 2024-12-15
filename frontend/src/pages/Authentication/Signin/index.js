@@ -6,6 +6,7 @@ import useFetch from '../../../hooks/useFetch';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import toast from 'react-hot-toast';
+import { removeCurrentUser, setCurrentUser } from '../../../utils/userStorage';
 
 const REACT_APP_BASEURL = "http://localhost:3001";
 const reqAPI = {
@@ -47,8 +48,8 @@ function Signin() {
     useEffect(() => {
         if (status === 'success'){
             toast.success('Đăng nhập thành công');
+            setCurrentUser(payload);
             navigate('/');
-            // setCurrentUser(payload);
         }
         else if (status !== 'fail') {
             toast.error('Tên đăng nhập hoặc mật khẩu không đúng');

@@ -40,6 +40,7 @@ function SignUp() {
         const newDataSignUp = {
             'email': emailRef.current.value,
             'password': passwordRef.current.value,
+            'name': nameRef.current.value,
         }
         
         emailRef.current.value = '';
@@ -58,6 +59,7 @@ function SignUp() {
     const [validation, setValidation] = useState(true);
     const [confirm, setConfirm] = useState(true);
 
+    const nameRef = useRef(null);
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const repasswordRef = useRef(null);
@@ -85,7 +87,7 @@ function SignUp() {
                         Họ và tên
                         <span>*</span>
                     </label>
-                    <input
+                    <input ref={nameRef}
                         className={styles['username-input']}
                         id='usernameInput'
                         placeholder='Họ và tên'

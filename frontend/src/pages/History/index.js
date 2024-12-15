@@ -1,4 +1,3 @@
-import products from './products';
 import styles from './History.module.css';
 import { useState, useEffect, useRef } from 'react';
 import useFetch from '../../hooks/useFetch';
@@ -7,6 +6,7 @@ import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faStar } from '@fortawesome/free-solid-svg-icons';
+import { getCurrentUser } from '../../utils/userStorage';
 
 const REACT_APP_BASEURL = "http://localhost:3001";
 const API = {
@@ -17,7 +17,9 @@ const API = {
     body: null,
 };
 
+
 const History = () => {
+
     const handleClick = () => {
         const key = inputRef.current.value;
         const rating = ratingRef.current.value;
@@ -25,8 +27,8 @@ const History = () => {
 
         const newProductsList = (
             key === '' 
-            ? products.slice() 
-            : products.filter((product) => product.name.toLowerCase().includes(key.toLowerCase()))
+            ? productsList.slice() 
+            : productsList.filter((product) => product.name.toLowerCase().includes(key.toLowerCase()))
         )
 
         if (rating !== 'default') {
@@ -49,7 +51,31 @@ const History = () => {
     const ratingRef = useRef(null);
     const priceRef = useRef(null);
 
-    const [productsList, setProductsList] = useState(products);
+    const [productsList, setProductsList] = useState([]);
+
+    useEffect(() => {
+        const getProductsList = async () => {
+            try {
+                const response = await fetch(`${REACT_APP_BASEURL}/api/v1/link/get/${getCurrentUser().id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    setProductsList(data.data);
+                }
+                else
+                    return 'Error';
+        
+            } catch (error) {
+                toast.error('Lỗi kết nối đến server');
+            }
+        }
+        getProductsList();
+    }, [])
+
     const [reqAPI, setReqAPI] = useState(API);
 
     const navigate = useNavigate();
@@ -98,10 +124,10 @@ const History = () => {
             <div className={styles['products-list']}>
                 {productsList.map((product, index) => {
                     return (
-                        <div className={styles.product} key={index} onClick={() => setReqAPI({...reqAPI, body: JSON.stringify({product_url: product.link})})}>
-                            <img src={product.images[0]} alt="img" className={styles.image}/>
+                        <div className={styles.product} key={index} onClick={() => setReqAPI({...reqAPI, body: JSON.stringify({product_url: product.product_url})})}>
+                            <img src={product.imgs_url[0]} alt="img" className={styles.image}/>
                             <div className={styles.detail}>
-                                <div className={styles.name}>{product.name}</div>
+                                <div className={styles.name}>{product.product_name}</div>
                                 <div className={styles['rating-sold']}>
                                     <div className={styles.rating}>
                                         {product.rating}

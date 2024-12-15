@@ -8,47 +8,47 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 export default function Analyzation() {
-  const xData = ['Tích cực', 'Tiêu cực', 'Trung lập'];
+    const xData = ['Tích cực', 'Tiêu cực', 'Trung lập'];
 
-  const location = useLocation();
-  const {state} = location;
-  const information = state.information;
-  const comments = [state.positive_comments, state.negative_comments, state.neutral_comments];
+    const location = useLocation();
+    const {state} = location;
 
-  const yData = comments.map((arr) => (arr.length));
-  const total = yData.reduce((acc, val) => acc + val, 0);
+    const comments = [state.positive_comments, state.negative_comments, state.neutral_comments];
 
-  const formattedData = yData.map((value, index) => ({
+    const yData = comments.map((arr) => (arr.length));
+    const total = yData.reduce((acc, val) => acc + val, 0);
+
+    const formattedData = yData.map((value, index) => ({
     id: index,
     value,
     label: `${xData[index]} (${((value / total) * 100).toFixed(1)}%)`,
     color: index === 0 ? 'green' : index === 1 ? 'red' : 'blue',
-  }));
+    }));
 
-  const rating = (information.rating).toFixed(1);
-  const ratingPercent = (information.rating/5).toFixed(2);
-  const [type, setType] = useState(0);
+    const rating = (state.rating).toFixed(1);
+    const ratingPercent = (state.rating/5).toFixed(2);
+    const [type, setType] = useState(0);
 
-  useEffect(() => {
-    document.getElementById('description').innerHTML = information.description; 
-  })
+    useEffect(() => {
+        document.getElementById('description').innerHTML = state.description; 
+    })
 
-  const handleClick = (event, item) => {
-    setType(item.dataIndex);
-  };
+    const handleClick = (event, item) => {
+        setType(item.dataIndex);
+    };
 
-  return (
+    return (
     <div className={styles.wrapper}>
         <div className={styles['product-information']}>
             <p className={styles.title}>Sản phẩm</p>
             <div className={styles.information}>
                 <div className={styles.images}>
-                    <ImageCarousel images={information.images}/>
+                    <ImageCarousel images={state['imgs_url']}/>
                 </div>
                 <div className={styles['information-container']}>
                     <div className={styles['information-detail']}>
                         <div className={styles.header}>
-                            <div className={styles.name}>{information.name}</div>
+                            <div className={styles.name}>{state['product_name']}</div>
                             <div className={styles.detail}>
                                 <div className={styles.rating}>
                                     {rating}
@@ -73,11 +73,11 @@ export default function Analyzation() {
                                 </div>
                                 <div className={styles.sold}>
                                     <div className={styles.line}></div>
-                                    {`Đã bán ${information.sold}`}
+                                    {`Đã bán ${state.sold}`}
                                 </div>
                             </div>
                             <div className={styles.price}>
-                                {new Intl.NumberFormat('de-DE').format(information.price)}
+                                {new Intl.NumberFormat('de-DE').format(state.price)}
                                 <span>₫</span>
                             </div>
                             <p>Mô tả sản phẩm:</p>
@@ -90,7 +90,7 @@ export default function Analyzation() {
             </div>
         </div>
         <div className={styles['charts-container']}>
-            <p className={styles.title}>Biểu đồ phân tích phản hồi từ khách hàng</p>
+            <p className={styles.title}>Biểu đồ phân tích phản hồi từ khách hàng: <span>{total} lượt đánh giá</span></p>
             <div className={styles.charts}>
                 <BarChart
                     title='Phân tích'
@@ -148,5 +148,5 @@ export default function Analyzation() {
             </ul>
         </div>
     </div>
-  );
+);
 }

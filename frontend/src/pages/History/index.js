@@ -84,7 +84,18 @@ const History = () => {
     const {payload, status, isLoading} = useFetch(`${REACT_APP_BASEURL}/api/v1/product`, reqAPI);
     useEffect(() => {
         if (status === 'success'){
-            navigate('/analyze', {state: payload});
+            const information = payload.information;
+            navigate('/analyze', {state: {
+                product_name : information.name,
+                price : information.price,
+                sold : information.sold,
+                imgs_url : information.images,
+                rating : information.rating,
+                description: information.description,
+                positive_comments: payload.positive_comments,
+                negative_comments: payload.negative_comments,
+                neutral_comments: payload.neutral_comments,
+            }});
         }
         else if (status !== 'success' && status !== 'fail') {
             toast.error(status);

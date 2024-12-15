@@ -19,10 +19,10 @@ export default function Analyzation() {
     const total = yData.reduce((acc, val) => acc + val, 0);
 
     const formattedData = yData.map((value, index) => ({
-    id: index,
-    value,
-    label: `${xData[index]} (${((value / total) * 100).toFixed(1)}%)`,
-    color: index === 0 ? 'green' : index === 1 ? 'red' : 'blue',
+        id: index,
+        value,
+        label: `${xData[index]} (${((value / total) * 100).toFixed(1)}%)`,
+        color: index === 0 ? 'green' : index === 1 ? 'red' : 'blue',
     }));
 
     const rating = (state.rating).toFixed(1);

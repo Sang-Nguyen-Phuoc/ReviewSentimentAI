@@ -56,7 +56,7 @@ class AuthController:
             raise AppError("Invalid email format.", 400)
 
         # Find the user in the database
-        user = user_model.find_user_by_email(email)
+        user = user_model.find_user(email, password)
         if not user:
             raise AppError("Invalid credentials: User not found.", 401)
 

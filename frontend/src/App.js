@@ -28,7 +28,7 @@ function App() {
         {
           routes.map((route, index) => {
             const Page = route.component;
-            return <Route key={index} path={route.path} element={<Page/>}></Route>
+            return <Route key={index} path={route.path} element={<Page />}></Route>
           })
         }
       </Routes>

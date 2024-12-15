@@ -74,4 +74,3 @@ class AuthController:
                 "name": user["name"]
             }
         }), 200
-

@@ -25,6 +25,7 @@ async def getResults():
         NEGs, POSs, NEUs =  ProductController.analyzeComments(comments)
 
         information =  ProductController.getInformation(product_id, spid, seller_id)
+        summary = ProductController.summarize(NEGs, POSs, NEUs)
 
         return jsonify({
             "status": "success",
@@ -33,7 +34,8 @@ async def getResults():
                 "negative_comments": NEGs,
                 "positive_comments": POSs,
                 "neutral_comments": NEUs, 
-                "information": information
+                "information": information,
+                "summary": summary
             }
         }), 200
     except AppError as e:

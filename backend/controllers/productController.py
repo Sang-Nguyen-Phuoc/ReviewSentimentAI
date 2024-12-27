@@ -16,8 +16,8 @@ class ProductController:
     @staticmethod
     def initialize():
         print("Initializing model and tokenizer...")
-        ProductController.tokenizer = AutoTokenizer.from_pretrained("lamsytan/sentiment-analysis-base-phobert")
-        ProductController.model = AutoModelForSequenceClassification.from_pretrained("lamsytan/sentiment-analysis-base-phobert")
+        ProductController.tokenizer = AutoTokenizer.from_pretrained("lamsytan/sentiment-analysis-product-comment")
+        ProductController.model = AutoModelForSequenceClassification.from_pretrained("lamsytan/sentiment-analysis-product-comment")
         print("Model and tokenizer initialized.")
 
     @staticmethod

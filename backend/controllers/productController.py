@@ -2,10 +2,11 @@ from flask import jsonify
 import torch
 import time
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
-import threading
-import os
 from utils.appError import AppError
 from utils.tikiAPIs import TikiAPIs
+import json
+import requests
+import markdown
 
 class ProductController: 
     # Class attributes for model and tokenizer
@@ -15,8 +16,8 @@ class ProductController:
     @staticmethod
     def initialize():
         print("Initializing model and tokenizer...")
-        ProductController.tokenizer = AutoTokenizer.from_pretrained("lamsytan/sentiment-analysis-base-phobert")
-        ProductController.model = AutoModelForSequenceClassification.from_pretrained("lamsytan/sentiment-analysis-base-phobert")
+        ProductController.tokenizer = AutoTokenizer.from_pretrained("lamsytan/sentiment-analysis-product-comment")
+        ProductController.model = AutoModelForSequenceClassification.from_pretrained("lamsytan/sentiment-analysis-product-comment")
         print("Model and tokenizer initialized.")
 
     @staticmethod
@@ -77,3 +78,36 @@ class ProductController:
 
         except Exception as e:
             raise AppError(f"Error analyzing comments: {str(e)}", 500)
+
+    @staticmethod
+    def summarize(NEGs, POSs, NEUs):
+        print("Summarizing...")
+        API_KEY = "AIzaSyCyUYR1dooRpLbAQLNiEArufd8mGd2YPks"
+        URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+        prompt_text = (
+            "Hãy tóm tắt các ý chính về sản phẩm dựa trên các bình luận sau đây, dài khoảng 100 từ.\n\n"
+            "Bình luận tiêu cực:\n" + "\n".join(NEGs) + "\n\n"
+            "Bình luận tích cực:\n" + "\n".join(POSs) + "\n\n"
+            "Bình luận trung lập:\n" + "\n".join(NEUs)
+        )
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": prompt_text}
+                    ]
+                }
+            ]
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+        try:
+            response = requests.post(URL, headers=headers, data=json.dumps(payload))
+            data = response.json()
+            markdown_text = data['candidates'][0]['content']['parts'][0]['text']
+            html_output = markdown.markdown(markdown_text)
+            return html_output
+        except Exception as e:
+            raise AppError(f"Error summarizing comments: {str(e)}", 500)
+        

@@ -17,7 +17,7 @@ async def getResults():
         
         # check if the product_url is a valid URL
         if not product_url.startswith('https://tiki.vn/'):
-            raise AppError('Invalid product URL from tiki.vn', 400)
+            raise AppError('Đường liên kết không hợp lệ từ tiki.vn', 400)
 
         product_id, spid, seller_id = TikiAPIs.getIDs(product_url)       
        

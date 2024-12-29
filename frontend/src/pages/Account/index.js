@@ -1,47 +1,47 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import styles from './Account.module.css';
 import { getCurrentUser } from '../../utils/userStorage';
 
 const Account = () => {
-    const [validation, setValidation] = useState(true);
-    const [confirm, setConfirm] = useState(true);
+    // const [validation, setValidation] = useState(true);
+    // const [confirm, setConfirm] = useState(true);
 
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [password, setPassword] = useState('');
-    const [repassword, setRepassword] = useState('');
+    // const [currentPassword, setCurrentPassword] = useState('');
+    // const [password, setPassword] = useState('');
+    // const [repassword, setRepassword] = useState('');
 
     const currentUser = getCurrentUser();
 
-    const handleValidatePassword = (password) => {
-        setPassword(password);
-        if (password === '')
-          setValidation(false);
-        else if (password.length < 8)
-          setValidation(false);
-        else 
-          setValidation(true);
-    }
+    // const handleValidatePassword = (password) => {
+    //     setPassword(password);
+    //     if (password === '')
+    //       setValidation(false);
+    //     else if (password.length < 8)
+    //       setValidation(false);
+    //     else 
+    //       setValidation(true);
+    // }
 
-    const handleConfirmPassword = (repassword) => {
-        setRepassword(repassword)
-        setConfirm(repassword === password);
-    };
+    // const handleConfirmPassword = (repassword) => {
+    //     setRepassword(repassword)
+    //     setConfirm(repassword === password);
+    // };
 
-    const handleUpdatePassword = (e) => {
-        e.preventDefault();
+    // const handleUpdatePassword = (e) => {
+    //     e.preventDefault();
 
-        const dataUpdate = {
-            currentPassword: currentPassword,
-            password: password,
-            rePassword: repassword,
-        };
+    //     const dataUpdate = {
+    //         currentPassword: currentPassword,
+    //         password: password,
+    //         rePassword: repassword,
+    //     };
 
-        setCurrentPassword('');
-        setPassword('');
-        setRepassword('');
+    //     setCurrentPassword('');
+    //     setPassword('');
+    //     setRepassword('');
 
-        console.log(dataUpdate);
-    }
+    //     console.log(dataUpdate);
+    // }
 
     return (
         <div className={styles.container}>
@@ -65,12 +65,11 @@ const Account = () => {
                 </div>
             </div>
 
-            <div className={styles.account}>
+            {/* <div className={styles.account}>
                 <div className={styles.title}>
                     <h3>Đổi mật khẩu</h3>
                 </div>
                 <div className={styles.info}>
-                    {/* Current Password Field */}
                     <div className={styles.password}>
                         <input
                             value={currentPassword}
@@ -82,8 +81,6 @@ const Account = () => {
                             required
                         />
                     </div>
-
-                    {/* New Password Field */}
                     <div className={styles.password}>
                         <input
                             value={password}
@@ -96,7 +93,6 @@ const Account = () => {
                         />
                         {validation || <p className={styles.invalid}>Mật khẩu ít nhất 8 ký tự</p>}
                     </div>
-                    {/* Confirm Password Field */}
                     <div className={styles.password}>
                         <input
                             value={repassword}
@@ -110,7 +106,6 @@ const Account = () => {
                         {confirm || <p className={styles.invalid}>Mật khẩu không trùng khớp</p>}
                     </div>
 
-                    {/* Update New Password Button */}
                     <div className={styles['btn-container']}>
                         <button
                             type='button'
@@ -129,7 +124,7 @@ const Account = () => {
                     </div>
 
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

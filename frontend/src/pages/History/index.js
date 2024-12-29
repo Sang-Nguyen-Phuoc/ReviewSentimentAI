@@ -28,7 +28,7 @@ const History = () => {
         const newProductsList = (
             key === '' 
             ? productsList.slice() 
-            : productsList.filter((product) => product.name.toLowerCase().includes(key.toLowerCase()))
+            : productsList.filter((product) => product.product_name.toLowerCase().includes(key.toLowerCase()))
         )
 
         if (rating !== 'default') {
@@ -44,7 +44,7 @@ const History = () => {
             else
                 newProductsList.sort((p1, p2) => p2.price - p1.price)
         }
-        setProductsList(newProductsList)
+        setFilterProductsList(newProductsList)
     }
 
     const inputRef = useRef(null);
@@ -52,6 +52,7 @@ const History = () => {
     const priceRef = useRef(null);
 
     const [productsList, setProductsList] = useState([]);
+    const [filterProductsList, setFilterProductsList] = useState([]);
 
     useEffect(() => {
         const getProductsList = async () => {
@@ -65,6 +66,7 @@ const History = () => {
                 const data = await response.json();
                 if (data.status === 'success') {
                     setProductsList(data.data);
+                    setFilterProductsList(data.data);
                 }
                 else
                     return 'Error';
@@ -95,6 +97,7 @@ const History = () => {
                 positive_comments: payload.positive_comments,
                 negative_comments: payload.negative_comments,
                 neutral_comments: payload.neutral_comments,
+                summary: payload.summary,
             }});
         }
         else if (status !== 'success' && status !== 'fail') {
@@ -129,11 +132,11 @@ const History = () => {
                 </div>
             </div>
             <div className={styles.quantity}>
-                        <span>{productsList.length}</span>
+                        <span>{filterProductsList.length}</span>
                         sản phẩm
             </div>
             <div className={styles['products-list']}>
-                {productsList.map((product, index) => {
+                {filterProductsList.map((product, index) => {
                     return (
                         <div className={styles.product} key={index} onClick={() => setReqAPI({...reqAPI, body: JSON.stringify({product_url: product.product_url})})}>
                             <img src={product.imgs_url[0]} alt="img" className={styles.image}/>

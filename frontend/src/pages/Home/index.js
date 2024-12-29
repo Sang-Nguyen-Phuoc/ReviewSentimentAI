@@ -79,6 +79,7 @@ export default function Home() {
             positive_comments: payload.positive_comments,
             negative_comments: payload.negative_comments,
             neutral_comments: payload.neutral_comments,
+            summary: payload.summary
           }
         });
       }

@@ -19,30 +19,34 @@ const NavBar = () => {
 
     return (
         <div className={styles["navbar-container"]}>
-            <div className={styles['logo-container']} onClick={() => handleNavigate('/')} >
-                <img src="/logo192.png" alt="Sentiment Analysis" className={styles["logo"]} />
-                <p>Sentiment Analysis</p>
-            </div>
-            <div className={styles['navbar-cta']}>
-                {currentUser
-                    ? (
-                        <>
-                            <div className={styles['text']} onClick={() => handleNavigate('/history')}><span>Lịch sử</span></div>
-                            <div className={styles['profile-logo-container']}>
-                                <img src={Logo} alt="Profile" className={styles["profile-logo"]} />
-                                <div className={styles['dropdown-menu']}>
-                                    <div onClick={() => handleNavigate('/account')}>Tài khoản</div>
-                                    <div onClick={() => handleLogout()}>Đăng xuất</div>
+            <div className="container d-flex justify-content-between align-items-center">
+                <div className={styles['logo-container']} onClick={() => handleNavigate('/')} >
+                    <img src="/logo192.png" alt="Sentiment Analysis" className={styles["logo"]} />
+                    <div>
+                        <p className="text-center">Sentiment Analysis</p>
+                    </div>
+                </div>
+                <div className="d-flex gap-3">
+                    {currentUser
+                        ? (
+                            <>
+                                <div className={styles['text']} onClick={() => handleNavigate('/history')}><span>Lịch sử</span></div>
+                                <div className={styles['profile-logo-container']}>
+                                    <img src={Logo} alt="Profile" className={styles["profile-logo"]} />
+                                    <div className={styles['dropdown-menu']}>
+                                        <div onClick={() => handleNavigate('/account')}>Tài khoản</div>
+                                        <div onClick={() => handleLogout()}>Đăng xuất</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </>
-                    )
-                    : (
-                        <>
-                            <div className={styles['text']} onClick={() => handleNavigate('/signin')}><span>Đăng nhập</span></div>
-                            <div className={styles['text']} onClick={() => handleNavigate('/signup')}><span>Đăng ký</span></div>
-                        </>
-                    )}
+                            </>
+                        )
+                        : (
+                            <>
+                                <div className={styles['text']} onClick={() => handleNavigate('/signin')}><span>Đăng nhập</span></div>
+                                <div className={styles['text']} onClick={() => handleNavigate('/signup')}><span>Đăng ký</span></div>
+                            </>
+                        )}
+                </div>
             </div>
         </div>
     );

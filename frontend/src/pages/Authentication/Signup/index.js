@@ -80,8 +80,8 @@ function SignUp() {
     }, [payload, status])
 
     return (
-        <div className={styles.wrapper}>
-            <form className={styles.form} onSubmit={handleSignUp}>
+        <div className="py-4 p-md-5 mx-lg-5">
+            <form className={styles.form + " " + "p-3 px-md-4 px-lg-5"} onSubmit={handleSignUp}>
                 <div className={styles.username}>
                     <label htmlFor='usernameInput'>
                         Họ và tên
@@ -143,12 +143,12 @@ function SignUp() {
                     </div>
                     {confirm || <p className={styles.invalid}>Mật khẩu không trùng khớp</p>}
                 </div>
-                <div className={styles.container}>
+                <div className={styles.container }>
                     <input type="checkbox"
                         className={styles['checkbox-input']}
                         checked={chkbox}
                         onChange={v => setChkbox(v.target.checked)} />
-                    <p className={styles['policy-content']}>Tôi đã đọc và đồng ý với các
+                    <p className={styles['policy-content'] + " m-0"}>Tôi đã đọc và đồng ý với các
                         <Link to={'/about-us'} className={styles.link}> Quy định & Điều khoản </Link>
                         và
                         <Link to={'/about-us'} className={styles.link}> Chính sách bảo mật </Link>
@@ -168,8 +168,8 @@ function SignUp() {
                         ĐĂNG KÝ
                     </button>
                 </div>
-                <div className={`${styles.container} ${styles.signin}`}>
-                    <p className={styles.question}>Bạn đã có tài khoản?</p>
+                <div className="text-center d-flex gap-3 flex-wrap justify-content-center">
+                    <span className="text-dark">Bạn đã có tài khoản?</span>
                     <Link to='/signin' className={`${styles.link} ${styles['signup-link']}`}>Đăng nhập ngay</Link>
                 </div>
             </form>

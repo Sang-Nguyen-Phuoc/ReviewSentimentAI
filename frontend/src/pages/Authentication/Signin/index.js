@@ -5,7 +5,8 @@ import useFetch from '../../../hooks/useFetch';
 // import {CurrentUserContext} from '../../context/CurrentUserContext'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import { removeCurrentUser, setCurrentUser } from '../../../utils/userStorage';
 
 const REACT_APP_BASEURL = "http://localhost:3001";
 const reqAPI = {
@@ -24,48 +25,41 @@ function Signin() {
             'email': emailRef.current.value,
             'password': passwordRef.current.value
         };
-        console.log(dataSignIn);
 
         emailRef.current.value = '';
         emailRef.current.focus();
         passwordRef.current.value = '';
         
-        reqAPI.body = JSON.stringify(dataSignIn);
+        setFetch({...fetch, body: JSON.stringify(dataSignIn)});
         setShow(false);
-        setFetch(fetch+1);
     }
 
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const [show, setShow] = useState(false);
-    const [fetch, setFetch] = useState(0);
+    const [fetch, setFetch] = useState(reqAPI);
     const navigate = useNavigate();
     // const {setCurrentUser} = useContext(CurrentUserContext);
 
 
     // Call API
-    const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/login`, reqAPI);
+    const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/signin`, fetch);
 
     useEffect(() => {
         if (status === 'success'){
-            toast.success('Sign in successfully!');
-            // setCurrentUser(payload);
-            setTimeout(() => navigate('/'), 2000);
+            toast.success('Đăng nhập thành công');
+            setCurrentUser(payload);
+            navigate('/');
         }
         else if (status !== 'fail') {
-            toast.error(status);
+            toast.error('Tên đăng nhập hoặc mật khẩu không đúng');
         }
-        reqAPI.body = null;
-        setFetch(fetch+1);
+        setFetch({...fetch, body:null});
     }, [payload, status])
 
     return (
-        <div className={styles.wrapper}>
-            <Toaster
-                position='top-right'
-                reverseOrder={false}
-            />
-            <form className = {styles.form} onSubmit={handleSignIn}>
+        <div className="py-4 p-md-5 mx-lg-5">
+            <form className = {styles.form + " " + "p-3 px-md-4 px-lg-5"} onSubmit={handleSignIn}>
                 <div className={styles.email}>
                     <label htmlFor='emailInput'>
                         Email
@@ -100,8 +94,8 @@ function Signin() {
                         ĐĂNG NHẬP
                     </button>
                 </div>
-                <div className={`${styles.container} ${styles.signup}`}>
-                    <p className={styles.question}>Bạn chưa có tài khoản?</p>
+                <div className="text-center d-flex gap-3 flex-wrap justify-content-center">
+                    <span className="text-dark">Bạn chưa có tài khoản?</span>
                     <Link to='/signup' className={`${styles.link} ${styles['signup-link']}`}>Đăng ký ngay</Link>
                 </div>
             </form>

@@ -1,19 +1,19 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../Authentication.module.css'
-import { useRef, useState } from 'react';
-// import useFetch from '../../hooks/useFetch';
-// import toast, { Toaster } from 'react-hot-toast';
+import { useRef, useState, useEffect } from 'react';
+import useFetch from '../../../hooks/useFetch';
+import toast from 'react-hot-toast';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 
-// const REACT_APP_BASEURL = "http://localhost:3002";
-// const reqAPI = {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: null,
-// };
+const REACT_APP_BASEURL = "http://localhost:3001";
+const reqAPI = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: null,
+};
 
 function SignUp() {
     const handleValidatePassword = (password) => {
@@ -40,18 +40,18 @@ function SignUp() {
         const newDataSignUp = {
             'email': emailRef.current.value,
             'password': passwordRef.current.value,
+            'name': nameRef.current.value,
         }
-
-        console.log(newDataSignUp);
         
         emailRef.current.value = '';
         passwordRef.current.value = '';
         repasswordRef.current.value = '';
         emailRef.current.focus();
-        // reqAPI.body = JSON.stringify(newDataSignUp);
+        
+        setFetch({...fetch, body: JSON.stringify(newDataSignUp)});
     }
 
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [showPass, setShowPass] = useState(false);
     const [showRePass, setShowRePass] = useState(false);
@@ -59,37 +59,35 @@ function SignUp() {
     const [validation, setValidation] = useState(true);
     const [confirm, setConfirm] = useState(true);
 
+    const nameRef = useRef(null);
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const repasswordRef = useRef(null);
 
-    // Fetch API
-    // const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/register`, reqAPI);
+    const [fetch, setFetch] = useState(reqAPI);
 
-    // useEffect(() => {
-    //     if (status === 'success'){
-    //         toast.success('Register successfully!');
-    //         const navi = setTimeout(() => navigate('/signin'), 2000);
-    //     }
-    //     else if (status !== 'fail') {
-    //         toast.error(status);
-    //     }
-    //     reqAPI.body = null;
-    // }, [payload, status])
+    // Fetch API
+    const {payload, status} = useFetch(`${REACT_APP_BASEURL}/api/v1/auth/signup`, fetch);
+    useEffect(() => {
+        if (status === 'success'){
+            toast.success('Đăng ký thành công');
+            navigate('/signin');
+        }
+        else if (status !== 'fail') {
+            toast.error('Email đã tồn tại');
+        }
+        setFetch({...fetch, body:null})
+    }, [payload, status])
 
     return (
-        <div className={styles.wrapper}>
-            {/* <Toaster 
-                position='top-right'
-                reverseOrder={false}
-            /> */}
-            <form className={styles.form} onSubmit={handleSignUp}>
+        <div className="py-4 p-md-5 mx-lg-5">
+            <form className={styles.form + " " + "p-3 px-md-4 px-lg-5"} onSubmit={handleSignUp}>
                 <div className={styles.username}>
                     <label htmlFor='usernameInput'>
                         Họ và tên
                         <span>*</span>
                     </label>
-                    <input
+                    <input ref={nameRef}
                         className={styles['username-input']}
                         id='usernameInput'
                         placeholder='Họ và tên'
@@ -145,12 +143,12 @@ function SignUp() {
                     </div>
                     {confirm || <p className={styles.invalid}>Mật khẩu không trùng khớp</p>}
                 </div>
-                <div className={styles.container}>
+                <div className={styles.container }>
                     <input type="checkbox"
                         className={styles['checkbox-input']}
                         checked={chkbox}
                         onChange={v => setChkbox(v.target.checked)} />
-                    <p className={styles['policy-content']}>Tôi đã đọc và đồng ý với các
+                    <p className={styles['policy-content'] + " m-0"}>Tôi đã đọc và đồng ý với các
                         <Link to={'/about-us'} className={styles.link}> Quy định & Điều khoản </Link>
                         và
                         <Link to={'/about-us'} className={styles.link}> Chính sách bảo mật </Link>
@@ -170,8 +168,8 @@ function SignUp() {
                         ĐĂNG KÝ
                     </button>
                 </div>
-                <div className={`${styles.container} ${styles.signin}`}>
-                    <p className={styles.question}>Bạn đã có tài khoản?</p>
+                <div className="text-center d-flex gap-3 flex-wrap justify-content-center">
+                    <span className="text-dark">Bạn đã có tài khoản?</span>
                     <Link to='/signin' className={`${styles.link} ${styles['signup-link']}`}>Đăng nhập ngay</Link>
                 </div>
             </form>

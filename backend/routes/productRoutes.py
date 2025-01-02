@@ -17,14 +17,17 @@ async def getResults():
         
         # check if the product_url is a valid URL
         if not product_url.startswith('https://tiki.vn/'):
-            raise AppError('Invalid product URL from tiki.vn', 400)
+            raise AppError('Đường liên kết không hợp lệ từ tiki.vn', 400)
 
-        product_id, spid, seller_id = TikiAPIs.getIDs(product_url)       
+        product_id, spid, seller_id = TikiAPIs.getIDs(product_url)
+        print(product_url)
+        print(product_id, spid, seller_id)       
        
         comments = await ProductController.getCommentsOfProducts(product_id, spid, seller_id)       
         NEGs, POSs, NEUs =  ProductController.analyzeComments(comments)
 
         information =  ProductController.getInformation(product_id, spid, seller_id)
+        summary = ProductController.summarize(NEGs, POSs, NEUs)
 
         return jsonify({
             "status": "success",
@@ -33,7 +36,8 @@ async def getResults():
                 "negative_comments": NEGs,
                 "positive_comments": POSs,
                 "neutral_comments": NEUs, 
-                "information": information
+                "information": information,
+                "summary": summary
             }
         }), 200
     except AppError as e:

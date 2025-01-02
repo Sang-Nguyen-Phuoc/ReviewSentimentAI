@@ -4,7 +4,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import IconChevronLeft from "../icons/IconChevronLeft";
 import IconChevronRight from "../icons/IconChevronRight";
 
-function ImageCarousel({images}) {
+function ImageCarousel({images, className}) {
   const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex) => {
@@ -14,15 +14,15 @@ function ImageCarousel({images}) {
   return (
     <Carousel 
         activeIndex={index} 
-        onSelect={handleSelect} 
-        className={styles.carousel}
+        className={className}
+        onSelect={handleSelect}
         prevIcon={<IconChevronLeft color="#fff"/>}
         nextIcon={<IconChevronRight color="#fff"/>}
     >
         {images.map((image, index) => {
             return (
-                <Carousel.Item key={index} className={styles['carousel-item']}>
-                    <img src={image} alt='img' className={styles.img}></img>
+                <Carousel.Item key={index}>
+                    <img src={image} alt='img' className="img-fluid" style={{objectFit: 'contain'}}></img>
                 </Carousel.Item>
             );
         })}

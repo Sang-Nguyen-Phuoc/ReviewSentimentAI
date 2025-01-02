@@ -3,8 +3,6 @@ from controllers.authController import AuthController
 from data.database import Database
 from utils.appError import AppError
 
-
-
 authRoutes = Blueprint('authRoutes', __name__)
 
 # Create a database instance

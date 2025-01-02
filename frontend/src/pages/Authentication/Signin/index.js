@@ -58,8 +58,8 @@ function Signin() {
     }, [payload, status])
 
     return (
-        <div className={styles.wrapper}>
-            <form className = {styles.form} onSubmit={handleSignIn}>
+        <div className="py-4 p-md-5 mx-lg-5">
+            <form className = {styles.form + " " + "p-3 px-md-4 px-lg-5"} onSubmit={handleSignIn}>
                 <div className={styles.email}>
                     <label htmlFor='emailInput'>
                         Email
@@ -94,8 +94,8 @@ function Signin() {
                         ĐĂNG NHẬP
                     </button>
                 </div>
-                <div className={`${styles.container} ${styles.signup}`}>
-                    <p className={styles.question}>Bạn chưa có tài khoản?</p>
+                <div className="text-center d-flex gap-3 flex-wrap justify-content-center">
+                    <span className="text-dark">Bạn chưa có tài khoản?</span>
                     <Link to='/signup' className={`${styles.link} ${styles['signup-link']}`}>Đăng ký ngay</Link>
                 </div>
             </form>

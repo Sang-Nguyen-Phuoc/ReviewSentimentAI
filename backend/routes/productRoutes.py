@@ -19,7 +19,9 @@ async def getResults():
         if not product_url.startswith('https://tiki.vn/'):
             raise AppError('Đường liên kết không hợp lệ từ tiki.vn', 400)
 
-        product_id, spid, seller_id = TikiAPIs.getIDs(product_url)       
+        product_id, spid, seller_id = TikiAPIs.getIDs(product_url)
+        print(product_url)
+        print(product_id, spid, seller_id)       
        
         comments = await ProductController.getCommentsOfProducts(product_id, spid, seller_id)       
         NEGs, POSs, NEUs =  ProductController.analyzeComments(comments)

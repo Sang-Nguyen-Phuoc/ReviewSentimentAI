@@ -44,10 +44,10 @@ const Account = () => {
     // }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.account}>
-                <div className={styles.title}>
-                    <h3>Tài khoản</h3>
+        <div className="container mt-4">
+            <div className="">
+                <div className="">
+                    <h3 className='text-center'>Tài khoản</h3>
                 </div>
                 <div className={styles.info}>
                     <table>
@@ -58,7 +58,7 @@ const Account = () => {
                             </tr>
                             <tr>
                                 <td>Email</td>
-                                <td>{currentUser.email}</td>
+                                <td className='text-break'>{currentUser.email}</td>
                             </tr>
                         </tbody>
                     </table>

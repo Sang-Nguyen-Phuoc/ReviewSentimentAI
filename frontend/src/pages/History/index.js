@@ -107,25 +107,29 @@ const History = () => {
     }, [payload, status])
 
     return ( 
-        <div className={styles.wrapper}>
+        <div className="container mt-4">
             <AnalyzeModal show={isLoading}/>
-            <div className={styles.search}>
-                <div className={styles.input} >
-                    <input ref={inputRef} placeholder='Nhập tên sản phẩm'/>
+            <div className={styles.search + " d-flex justify-content-between flex-wrap gap-3"}> 
+                <div className="flex-fill" >
+                    <input ref={inputRef} placeholder='Nhập tên sản phẩm' className='form-control'/>
                 </div>
-                <div className={styles.filter}>
-                    <select ref={ratingRef} defaultValue={'default'}>
-                        <option value="default" disabled>Đánh giá</option>
-                        <option value="ascending">Tăng dần</option>
-                        <option value="descending">Giảm dần</option>
-                    </select>
-                    <select ref={priceRef} defaultValue={'default'}>
-                        <option value="default" disabled>Giá</option>
-                        <option value="ascending">Tăng dần</option>
-                        <option value="descending">Giảm dần</option>
-                    </select>
+                <div className={" d-flex gap-3 flex-wrap"}>
+                    <div>
+                        <select ref={ratingRef} defaultValue={'default'} className='form-select'>
+                            <option value="default" disabled>Đánh giá</option>
+                            <option value="ascending">Tăng dần</option>
+                            <option value="descending">Giảm dần</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select ref={priceRef} defaultValue={'default'} className='form-select'>
+                            <option value="default" disabled>Giá</option>
+                            <option value="ascending">Tăng dần</option>
+                            <option value="descending">Giảm dần</option>
+                        </select>
+                    </div>
                     {/* <FontAwesomeIcon icon={faSort}/> */}
-                    <button className={styles.btn} onClick={handleClick}>
+                    <button className={"btn text-white d-flex gap-2 align-items-center px-3"} style={{backgroundColor: 'var(--primary-color)'}} onClick={handleClick}>
                         Lọc
                         <FontAwesomeIcon icon={faFilter}/>
                     </button>
@@ -138,11 +142,11 @@ const History = () => {
             <div className={styles['products-list']}>
                 {filterProductsList.map((product, index) => {
                     return (
-                        <div className={styles.product} key={index} onClick={() => setReqAPI({...reqAPI, body: JSON.stringify({product_url: product.product_url})})}>
-                            <img src={product.imgs_url[0]} alt="img" className={styles.image}/>
-                            <div className={styles.detail}>
+                        <div className={styles.product + ' flex-wrap justify-content-center'} key={index} onClick={() => setReqAPI({...reqAPI, body: JSON.stringify({product_url: product.product_url})})}>
+                            <img src={product.imgs_url[0]} alt="img" className={styles.image + " img-fluid"}/>
+                            <div className={styles.detail} style={{flex: '1 1 200px'}}>
                                 <div className={styles.name}>{product.product_name}</div>
-                                <div className={styles['rating-sold']}>
+                                <div className={styles['rating-sold'] + ' d-flex flex-wrap'}>
                                     <div className={styles.rating}>
                                         {product.rating}
                                         <div className={styles['stars-outer']}>

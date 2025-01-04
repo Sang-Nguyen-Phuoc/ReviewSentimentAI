@@ -157,11 +157,13 @@ export default function Analyzation() {
                     Bình luận chi tiết:
                     <span className={styles.type}>{xData[type]}</span>
                 </p>
-                <ul>
-                    {comments[type].map((comment, index) => {
-                        return <li key={index}>{comment}</li>;
-                    })}
-                </ul>
+                <div className={styles["comment-list"]}>
+                    <ul>
+                        {comments[type].map((comment, index) => {
+                            return <li key={index}>{comment}</li>;
+                        })}
+                    </ul>
+                </div>
             </div>
         </div>
     );

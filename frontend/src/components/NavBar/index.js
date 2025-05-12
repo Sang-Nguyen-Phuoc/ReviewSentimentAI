@@ -3,11 +3,16 @@ import { useState } from "react";
 import styles from './NavBar.module.css';
 import Logo from '../../images/account-logo.png';
 import { getCurrentUser, removeCurrentUser } from "../../utils/userStorage";
+import toast from "react-hot-toast";
 
 const NavBar = () => {
     const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState(getCurrentUser());
     const handleNavigate = (path) => {
+        if (path === '/history' && !currentUser) {
+            toast.error("Vui lòng đăng nhập để sử dụng chức năng này");
+            return;
+        }
         navigate(path);
     };
 
@@ -42,6 +47,7 @@ const NavBar = () => {
                         )
                         : (
                             <>
+                                <div className={styles['text']} onClick={() => handleNavigate('/history')}><span>Lịch sử</span></div>
                                 <div className={styles['text']} onClick={() => handleNavigate('/signin')}><span>Đăng nhập</span></div>
                                 <div className={styles['text']} onClick={() => handleNavigate('/signup')}><span>Đăng ký</span></div>
                             </>

@@ -82,7 +82,7 @@ class ProductController:
     @staticmethod
     def summarize(NEGs, POSs, NEUs):
         print("Summarizing...")
-        API_KEY = "AIzaSyCyUYR1dooRpLbAQLNiEArufd8mGd2YPks"
+        API_KEY = "AIzaSyB7RxQ_bxmnBc7T27ar2BmofJYVD1HZHWI"
         URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
         prompt_text = (
             "Hãy tóm tắt các ý chính về sản phẩm dựa trên các bình luận sau đây, dài khoảng 100 từ.\n\n"

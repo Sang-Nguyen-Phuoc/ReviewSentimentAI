@@ -24,11 +24,11 @@ export default function Home() {
     const [fetchRequest, setFetchRequest] = useState(reqAPI);
 
     const handleClick = (e) => {
-        const currentUser = getCurrentUser();
-        if (!currentUser) {
-            toast.error("Vui lòng đăng nhập để sử dụng chức năng này");
-            return;
-        }
+        // const currentUser = getCurrentUser();
+        // if (!currentUser) {
+        //     toast.error("Vui lòng đăng nhập để sử dụng chức năng này");
+        //     return;
+        // }
 
         const data = {
             product_url: link,
@@ -55,8 +55,9 @@ export default function Home() {
     useEffect(() => {
         if (status === "success") {
             const information = payload.information;
+
             const bodyFetch = {
-                user_id: getCurrentUser().id,
+                // user_id: getCurrentUser().id,
                 product_name: information.name,
                 product_url: link,
                 price: information.price,
@@ -64,12 +65,19 @@ export default function Home() {
                 imgs_url: information.images,
                 rating: information.rating,
             };
-            const fetchReq = {
-                ...reqAPI,
-                body: JSON.stringify(bodyFetch),
-            };
 
-            addLink(fetchReq);
+            if (getCurrentUser() !== null) {
+                const fetchReq = {
+                    ...reqAPI,
+                    body: JSON.stringify({
+                        ...bodyFetch,
+                        user_id: getCurrentUser().id,
+                    }),
+                };
+
+                addLink(fetchReq);
+            }
+            
 
             navigate("/analyze", {
                 state: {
@@ -106,7 +114,11 @@ export default function Home() {
                         handleClick();
                     }}
                 >
-                    <label htmlFor="input-link">Nhập đường liên kết của sản phẩm:</label>
+                    <label htmlFor="input-link">
+                        Nhập đường liên kết sản phẩm từ
+                        <a href="https://tiki.vn" target="_blank" rel="noopener noreferrer" style={{"marginLeft" : 5}}>Tiki</a>
+                        :
+                    </label>
                     <div className={styles["input-container"]}>
                         <input
                             type="text"
